@@ -11,7 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 
 	"github.com/night-sword/kratos-kit/errors"
-	klog "github.com/night-sword/kratos-kit/log"
+	. "github.com/night-sword/kratos-kit/log"
 )
 
 // Redacter defines how to log an object
@@ -29,9 +29,9 @@ func LogServer(logger log.Logger) middleware.Middleware {
 			reply, err = handler(ctx, req)
 
 			if info, ok := transport.FromServerContext(ctx); ok {
-				kvs = append(kvs, "OPT", info.Operation())
+				kvs = append(kvs, KeyOperation, info.Operation())
 			}
-			kvs = append(kvs, "LATENCY", time.Since(startAt).Seconds())
+			kvs = append(kvs, KeyLatency, time.Since(startAt).Seconds())
 
 			var level log.Level
 			withoutStack := false
@@ -39,36 +39,36 @@ func LogServer(logger log.Logger) middleware.Middleware {
 				level = log.LevelError
 				if kerr := errors.FromError(err); kerr != nil {
 					withoutStack = true
-					if _, asWarn := kerr.GetMetadata()[klog.KeyAsWarn]; asWarn {
+					if _, asWarn := kerr.GetMetadata()[KeyAsWarn]; asWarn {
 						level = log.LevelWarn
 					}
 
 					kvs = append(kvs,
-						"CODE", kerr.GetCode(),
-						"REASON", kerr.GetReason(),
-						"MSG", kerr.GetMessage(),
+						KeyCode, kerr.GetCode(),
+						KeyReason, kerr.GetReason(),
+						KeyMessage, kerr.GetMessage(),
 					)
 					if len(kerr.GetMetadata()) > 0 {
-						kvs = append(kvs, "META", kerr.GetMetadata())
+						kvs = append(kvs, KeyMeta, kerr.GetMetadata())
 					}
 					if kerr.Unwrap() != nil {
-						kvs = append(kvs, "CAUSE", kerr.Unwrap())
+						kvs = append(kvs, KeyCause, kerr.Unwrap())
 					}
 					if level >= log.LevelError {
-						kvs = append(kvs, "STACK", kerr.StackTrace())
+						kvs = append(kvs, KeyStack, kerr.StackTrace())
 					}
 				} else {
-					kvs = append(kvs, "CODE", errors.UnknownCode, "MSG", err.Error())
+					kvs = append(kvs, KeyCode, errors.UnknownCode, KeyMessage, err.Error())
 				}
 			} else {
 				level = log.LevelInfo
-				kvs = append(kvs, "CODE", 0)
+				kvs = append(kvs, KeyCode, 0)
 			}
 
-			kvs = append(kvs, "ARGS", extractArgs(req))
+			kvs = append(kvs, KeyArg, extractArgs(req))
 
 			if withoutStack {
-				logger = klog.WithNoStack(klog.Unwrap(logger))
+				logger = WithNoStack(Unwrap(logger))
 			}
 			_ = log.WithContext(ctx, logger).Log(level, kvs...)
 			return

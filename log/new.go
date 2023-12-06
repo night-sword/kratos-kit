@@ -12,11 +12,11 @@ import (
 )
 
 var defaultEncoderCfg = &zapcore.EncoderConfig{
-	LevelKey:       "LV",
 	NameKey:        "logger",
-	CallerKey:      "CALLER",
-	FunctionKey:    "FUN",
-	StacktraceKey:  "STACK",
+	LevelKey:       KeyLevel,
+	CallerKey:      KeyCaller,
+	FunctionKey:    KeyFunction,
+	StacktraceKey:  KeyStack,
 	SkipLineEnding: false,
 	LineEnding:     zapcore.DefaultLineEnding,
 	EncodeLevel:    zapcore.CapitalLevelEncoder,
@@ -26,15 +26,10 @@ var defaultEncoderCfg = &zapcore.EncoderConfig{
 }
 
 var defaultValues = []any{
-	"TS", log.Timestamp("20060102:150405"),
-	"CALLER", log.DefaultCaller,
-	"VER", "",
+	KeyTimestamp, log.Timestamp("20060102:150405"),
+	KeyCaller, log.DefaultCaller,
+	KeyVersion, "",
 }
-
-var (
-	KeyAsWarn  = "AsWarn"
-	MetaAsWarn = map[string]string{KeyAsWarn: "1"}
-)
 
 var loggerToNoStack = make(map[log.Logger]log.Logger)
 
