@@ -1,7 +1,6 @@
 package log
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -32,34 +31,53 @@ var defaultValues = []any{
 	"VER", "",
 }
 
-var _zaplogger *zap.Logger
+var (
+	KeyAsWarn  = "AsWarn"
+	MetaAsWarn = map[string]string{KeyAsWarn: "1"}
+)
+
+var loggerToNoStack = make(map[log.Logger]log.Logger)
 
 // level : log level
 func NewLogger(level string, encoderCfg *zapcore.EncoderConfig, values []any) log.Logger {
-	cfg := mergeEncoderCfg(defaultEncoderCfg, encoderCfg)
+	logger := newLogger(level, encoderCfg, zapcore.ErrorLevel, values)
+	noStack := newLogger(level, encoderCfg, zapcore.ErrorLevel+1, values)
+
+	loggerToNoStack[logger] = noStack
+
+	return logger
+}
+
+func WithNoStack(logger log.Logger) log.Logger {
+	noStack, ok := loggerToNoStack[logger]
+	if ok {
+		return noStack
+	}
+
+	return logger
+}
+
+func newLogger(outputLv string, encoderCfg *zapcore.EncoderConfig, stackLevel zapcore.Level, values []any) log.Logger {
+	z := newZap(outputLv, encoderCfg, stackLevel)
+	kz := kzap.NewLogger(z)
+
 	values = mergeValues(defaultValues, values)
+	return log.With(kz, values...)
+}
+
+func newZap(outputLv string, encoderCfg *zapcore.EncoderConfig, stackLevel zapcore.Level) *zap.Logger {
+	cfg := mergeEncoderCfg(defaultEncoderCfg, encoderCfg)
 
 	core := zapcore.NewCore(
 		zapcore.NewJSONEncoder(*cfg),
 		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout)),
-		formatLevel(level),
+		formatLevel(outputLv),
 	)
-	zlogger := zap.New(core).WithOptions(
-		zap.AddStacktrace(zap.ErrorLevel),
+
+	return zap.New(core).WithOptions(
+		zap.AddStacktrace(stackLevel),
+		zap.AddCallerSkip(3),
 	)
-	_zaplogger = zlogger
-	kratosZapLogger := kzap.NewLogger(zlogger)
-
-	return log.With(kratosZapLogger, values...)
-}
-
-// use for some lib bind log lib to zap
-func ZapLogger() (logger *zap.Logger, err error) {
-	logger = _zaplogger
-	if logger == nil {
-		err = errors.New("zap logger now init")
-	}
-	return
 }
 
 func formatLevel(level string) zapcore.Level {

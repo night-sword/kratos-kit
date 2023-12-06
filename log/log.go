@@ -15,7 +15,7 @@ var global = &loggerAppliance{}
 // loggerAppliance is the proxy of `Logger` to
 // make logger change will affect all sub-logger.
 type loggerAppliance struct {
-	lock sync.Mutex
+	lock sync.RWMutex
 	log.Logger
 	messageKey string
 }
@@ -31,10 +31,23 @@ func (a *loggerAppliance) SetLogger(in log.Logger) {
 	a.Logger = in
 }
 
+func (a *loggerAppliance) GetLogger() log.Logger {
+	a.lock.RLock()
+	defer a.lock.RUnlock()
+	return a.Logger
+}
+
 func (a *loggerAppliance) SetMessageKey(key string) {
 	a.lock.Lock()
 	defer a.lock.Unlock()
 	a.messageKey = key
+}
+
+func Unwrap(l log.Logger) log.Logger {
+	if u, ok := l.(*loggerAppliance); ok {
+		return u.Logger
+	}
+	return l
 }
 
 // SetLogger should be called before any other log call.
