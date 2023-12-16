@@ -127,7 +127,7 @@ func Error(a ...interface{}) {
 	lv := log.LevelError
 	if err, ok := a[0].(error); ok {
 		meta := errors.FromError(err).GetMetadata()
-		if _, ok = meta[KeyMeta]; ok {
+		if _, ok = meta[KeyAsWarn]; ok {
 			lv = log.LevelWarn
 		}
 	}
