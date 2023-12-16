@@ -37,23 +37,12 @@ func LogServer(logger log.Logger) middleware.Middleware {
 			withoutStack := false
 			if err != nil {
 				level = log.LevelError
+
 				if kerr := errors.FromError(err); kerr != nil {
 					withoutStack = true
-					if _, asWarn := kerr.GetMetadata()[KeyAsWarn]; asWarn {
-						level = log.LevelWarn
-					}
+					level = GetLevel(kerr)
+					kvs = append(kvs, ExtractError(kerr)...)
 
-					kvs = append(kvs,
-						KeyCode, kerr.GetCode(),
-						KeyReason, kerr.GetReason(),
-						KeyMessage, kerr.GetMessage(),
-					)
-					if len(kerr.GetMetadata()) > 0 {
-						kvs = append(kvs, KeyMeta, kerr.GetMetadata())
-					}
-					if kerr.Unwrap() != nil {
-						kvs = append(kvs, KeyCause, kerr.Unwrap())
-					}
 					if level >= log.LevelError {
 						kvs = append(kvs, KeyStack, kerr.StackTrace())
 					}

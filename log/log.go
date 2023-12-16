@@ -7,8 +7,6 @@ import (
 	"sync"
 
 	"github.com/go-kratos/kratos/v2/log"
-
-	"github.com/night-sword/kratos-kit/errors"
 )
 
 // globalLogger is designed as a global logger in current process.
@@ -124,15 +122,16 @@ func Warnw(keyvals ...interface{}) {
 
 // Error logs a message at error level.
 func Error(a ...interface{}) {
-	lv := log.LevelError
+	level := log.LevelError
 	if err, ok := a[0].(error); ok {
-		meta := errors.FromError(err).GetMetadata()
-		if _, ok = meta[KeyAsWarn]; ok {
-			lv = log.LevelWarn
-		}
+		level = GetLevel(err)
+		kvs := ExtractError(err)
+
+		_ = global.Log(level, kvs...)
+		return
 	}
 
-	_ = global.Log(lv, global.messageKey, fmt.Sprint(a...))
+	_ = global.Log(level, global.messageKey, fmt.Sprint(a...))
 }
 
 // Errorf logs a message at error level.
