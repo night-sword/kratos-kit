@@ -9,8 +9,6 @@ import (
 
 	kerr "github.com/go-kratos/kratos/v2/errors"
 	httpstatus "github.com/go-kratos/kratos/v2/transport/http/status"
-
-	"github.com/night-sword/kratos-kit/log"
 )
 
 const (
@@ -71,9 +69,9 @@ func (e *Error) GRPCStatus() *status.Status {
 func (e *Error) Degrade() *Error {
 	err := Clone(e)
 	if err.Metadata == nil {
-		err.Metadata = log.MetaAsWarn
+		err.Metadata = MetaAsWarn
 	} else {
-		err.Metadata[log.KeyAsWarn] = "1"
+		err.Metadata[KeyAsWarn] = ValueAsWarn
 	}
 
 	return err.WithCause(Unrecoverable)
