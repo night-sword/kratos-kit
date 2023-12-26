@@ -9,6 +9,8 @@ import (
 
 	kerr "github.com/go-kratos/kratos/v2/errors"
 	httpstatus "github.com/go-kratos/kratos/v2/transport/http/status"
+
+	"github.com/night-sword/kratos-kit/log"
 )
 
 const (
@@ -64,6 +66,17 @@ func (e *Error) GRPCStatus() *status.Status {
 			Metadata: e.Metadata,
 		})
 	return s
+}
+
+func (e *Error) Degrade() *Error {
+	err := Clone(e)
+	if err.Metadata == nil {
+		err.Metadata = log.MetaAsWarn
+	} else {
+		err.Metadata[log.KeyAsWarn] = "1"
+	}
+
+	return err.WithCause(Unrecoverable)
 }
 
 // New returns an error object for the code, message.
