@@ -1,6 +1,6 @@
 module github.com/night-sword/kratos-kit
 
-go 1.20
+go 1.21.5
 
 require (
 	github.com/avast/retry-go/v4 v4.5.1
@@ -15,9 +15,7 @@ require (
 	github.com/go-playground/form/v4 v4.2.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

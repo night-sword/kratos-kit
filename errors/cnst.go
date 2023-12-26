@@ -9,12 +9,13 @@ import (
 
 // ---- Reason ---- //
 const (
-	RsnNotFound      string = "NOT_FOUND"
-	RsnParams               = "PARAMS_ERROR"
-	RsnUnrecoverable        = "UNRECOVERABLE"
-	RsnInternal             = "INTERNAL"
-	RsnForbidden            = "FORBIDDEN"
-	RsnConflict             = "CONFLICT"
+	RsnNotFound         string = "NOT_FOUND"
+	RsnParams                  = "PARAMS_ERROR"
+	RsnUnrecoverable           = "UNRECOVERABLE"
+	RsnInternal                = "INTERNAL"
+	RsnForbidden               = "FORBIDDEN"
+	RsnConflict                = "CONFLICT"
+	RsnRequestRateLimit        = "REQUEST_RATE_LIMIT"
 )
 
 // ---- Unrecoverable ---- //
