@@ -34,3 +34,9 @@ func ExtractError(err error) (kvs []any) {
 
 	return
 }
+
+func StackTrace(err error) (kvs []any) {
+	kerr := errors.FromError(err)
+
+	return []any{KeyStack, kerr.StackTrace()}
+}

@@ -127,6 +127,12 @@ func Error(a ...interface{}) {
 		level = GetLevel(err)
 		kvs := ExtractError(err)
 
+		if level == log.LevelError {
+			// If the error level is LvError, then instead of using the zap stack, use the error's own stack.
+			_ = WithNoStack(Unwrap(global)).Log(level, append(kvs, StackTrace(err)...)...)
+			return
+		}
+
 		_ = global.Log(level, kvs...)
 		return
 	}
