@@ -56,6 +56,16 @@ func (e *Error) WithMetadata(md map[string]string) *Error {
 	return err
 }
 
+// WithMetadata with an MD formed by the mapping of key, value.
+func (e *Error) AppendMetadata(k string, v any) *Error {
+	if e.Metadata == nil {
+		e.Metadata = map[string]string{k: fmt.Sprintf("%s", v)}
+	} else {
+		e.Metadata[k] = fmt.Sprintf("%s", v)
+	}
+	return e
+}
+
 // GRPCStatus returns the Status represented by se.
 func (e *Error) GRPCStatus() *status.Status {
 	s, _ := status.New(httpstatus.ToGRPCCode(int(e.Code)), e.Message).
