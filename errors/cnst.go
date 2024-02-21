@@ -23,6 +23,7 @@ const (
 	RsnForbidden               = "FORBIDDEN"
 	RsnConflict                = "CONFLICT"
 	RsnRequestRateLimit        = "REQUEST_RATE_LIMIT"
+	RsnAccessRepoFail          = "ACCESS_REPO_FAIL"
 )
 
 // ---- Unrecoverable ---- //
