@@ -150,6 +150,12 @@ func Errorw(keyvals ...interface{}) {
 	_ = global.Log(log.LevelError, keyvals...)
 }
 
+func ErrorE(err error) {
+	if err != nil {
+		Error(err)
+	}
+}
+
 // Fatal logs a message at fatal level.
 func Fatal(a ...interface{}) {
 	_ = global.Log(log.LevelFatal, global.messageKey, fmt.Sprint(a...))
