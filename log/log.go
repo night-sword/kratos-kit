@@ -150,7 +150,16 @@ func Errorw(keyvals ...interface{}) {
 	_ = global.Log(log.LevelError, keyvals...)
 }
 
+// ErrorE logs the error if it is not nil.
 func ErrorE(err error) {
+	if err != nil {
+		Error(err)
+	}
+}
+
+// E logs the error if it is not nil.
+// E is a shorthand version of the ErrorE function.
+func E(err error) {
 	if err != nil {
 		Error(err)
 	}
