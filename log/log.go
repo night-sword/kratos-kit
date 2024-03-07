@@ -24,7 +24,7 @@ type loggerAppliance struct {
 
 func init() {
 	global.SetLogger(log.DefaultLogger)
-	global.SetMessageKey("MSG")
+	global.SetMessageKey(KeyMessage)
 }
 
 func (a *loggerAppliance) SetLogger(in log.Logger) {
