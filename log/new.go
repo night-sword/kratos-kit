@@ -17,6 +17,7 @@ var defaultEncoderCfg = &zapcore.EncoderConfig{
 	CallerKey:      KeyCaller,
 	FunctionKey:    KeyFunction,
 	StacktraceKey:  KeyStack,
+	MessageKey:     KeyMessage,
 	SkipLineEnding: false,
 	LineEnding:     zapcore.DefaultLineEnding,
 	EncodeLevel:    zapcore.CapitalLevelEncoder,
