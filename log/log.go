@@ -7,6 +7,8 @@ import (
 	"sync"
 
 	"github.com/go-kratos/kratos/v2/log"
+
+	"github.com/night-sword/kratos-kit/errors"
 )
 
 // globalLogger is designed as a global logger in current process.
@@ -129,11 +131,11 @@ func Error(a ...interface{}) {
 
 		if level == log.LevelError {
 			// If the error level is LvError, then instead of using the zap stack, use the error's own stack.
-			_ = WithNoStack(Unwrap(global)).Log(level, append(kvs, StackTrace(err)...)...)
+			_ = WithNoStack(Unwrap(global)).Log(level, append(kvs, StackTrace(err)...))
 			return
 		}
 
-		_ = global.Log(level, kvs...)
+		_ = global.Log(level, append(kvs, KeyOperation, errors.FromError(err).StackTrace()[0])...)
 		return
 	}
 
