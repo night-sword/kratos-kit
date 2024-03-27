@@ -59,9 +59,9 @@ func (e *Error) WithMetadata(md map[string]string) *Error {
 // WithMetadata with an MD formed by the mapping of key, value.
 func (e *Error) AppendMetadata(k string, v any) *Error {
 	if e.Metadata == nil {
-		e.Metadata = map[string]string{k: fmt.Sprintf("%s", v)}
+		e.Metadata = map[string]string{k: fmt.Sprintf("%v", v)}
 	} else {
-		e.Metadata[k] = fmt.Sprintf("%s", v)
+		e.Metadata[k] = fmt.Sprintf("%v", v)
 	}
 	return e
 }
