@@ -2,8 +2,6 @@ package middleware
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -13,11 +11,6 @@ import (
 	"github.com/night-sword/kratos-kit/errors"
 	. "github.com/night-sword/kratos-kit/log"
 )
-
-// Redacter defines how to log an object
-type Redacter interface {
-	Redact() string
-}
 
 // Server is an server logging middleware.
 func LogServer(logger log.Logger) middleware.Middleware {
@@ -54,7 +47,7 @@ func LogServer(logger log.Logger) middleware.Middleware {
 				kvs = append(kvs, KeyCode, 0)
 			}
 
-			kvs = append(kvs, KeyArg, extractArgs(req))
+			kvs = append(kvs, KeyArg, ExtractArgs(req))
 
 			if withoutStack {
 				logger = WithNoStack(Unwrap(logger))
@@ -63,23 +56,4 @@ func LogServer(logger log.Logger) middleware.Middleware {
 			return
 		}
 	}
-}
-
-// extractArgs returns the string of the req
-func extractArgs(req any) any {
-	if j, err := json.Marshal(req); err == nil {
-		var v map[string]any
-		if err = json.Unmarshal(j, &v); err == nil {
-			return v
-		}
-	}
-
-	if redacter, ok := req.(Redacter); ok {
-		return redacter.Redact()
-	}
-	if stringer, ok := req.(fmt.Stringer); ok {
-		return stringer.String()
-	}
-
-	return fmt.Sprintf("%+v", req)
 }
