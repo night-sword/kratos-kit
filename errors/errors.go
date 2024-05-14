@@ -11,7 +11,7 @@ import (
 	kerr "github.com/go-kratos/kratos/v2/errors"
 	httpstatus "github.com/go-kratos/kratos/v2/transport/http/status"
 
-	"github.com/night-sword/kratos-kit/log"
+	"github.com/night-sword/kratos-kit/cnst"
 )
 
 const (
@@ -84,11 +84,11 @@ func (e *Error) GRPCStatus() *status.Status {
 }
 
 func (e *Error) Unrecoverable() *Error {
-	return e.WithCause(Unrecoverable).AddMetadata(log.KeyUnrecoverable, log.OKValue)
+	return e.WithCause(Unrecoverable).AddMetadata(cnst.LogKeyUnrecoverable, cnst.OKValue)
 }
 
 func (e *Error) AsWarn() *Error {
-	return Clone(e).AddMetadata(log.KeyAsWarn, log.OKValue)
+	return Clone(e).AddMetadata(cnst.LogKeyAsWarn, cnst.OKValue)
 }
 
 func (e *Error) Degrade() *Error {
@@ -206,7 +206,7 @@ func FromHttpRsp(body []byte) *Error {
 		},
 	}
 
-	if u, ok := rsp.Metadata[log.KeyUnrecoverable]; ok && u == log.OKValue {
+	if u, ok := rsp.Metadata[cnst.LogKeyUnrecoverable]; ok && u == cnst.OKValue {
 		err.cause = Unrecoverable
 	}
 

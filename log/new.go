@@ -9,14 +9,16 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	. "github.com/night-sword/kratos-kit/cnst"
 )
 
 var defaultEncoderCfg = &zapcore.EncoderConfig{
 	NameKey:        "logger",
-	LevelKey:       KeyLevel,
-	CallerKey:      KeyCaller,
-	FunctionKey:    KeyFunction,
-	StacktraceKey:  KeyStack,
+	LevelKey:       LogKeyLevel,
+	CallerKey:      LogKeyCaller,
+	FunctionKey:    LogKeyFunction,
+	StacktraceKey:  LogKeyStack,
 	MessageKey:     zapcore.OmitKey,
 	SkipLineEnding: false,
 	LineEnding:     zapcore.DefaultLineEnding,
@@ -27,9 +29,9 @@ var defaultEncoderCfg = &zapcore.EncoderConfig{
 }
 
 var defaultValues = []any{
-	KeyTimestamp, log.Timestamp("20060102:150405"),
-	KeyCaller, log.DefaultCaller,
-	KeyVersion, "",
+	LogKeyTimestamp, log.Timestamp("20060102:150405"),
+	LogKeyCaller, log.DefaultCaller,
+	LogKeyVersion, "",
 }
 
 var loggerToNoStack = make(map[log.Logger]log.Logger)

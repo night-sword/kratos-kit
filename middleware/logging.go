@@ -8,6 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 
+	"github.com/night-sword/kratos-kit/cnst"
 	"github.com/night-sword/kratos-kit/errors"
 	. "github.com/night-sword/kratos-kit/log"
 )
@@ -22,9 +23,9 @@ func LogServer(logger log.Logger) middleware.Middleware {
 			reply, err = handler(ctx, req)
 
 			if info, ok := transport.FromServerContext(ctx); ok {
-				kvs = append(kvs, KeyOperation, info.Operation())
+				kvs = append(kvs, cnst.LogKeyOperation, info.Operation())
 			}
-			kvs = append(kvs, KeyLatency, time.Since(startAt).Seconds())
+			kvs = append(kvs, cnst.LogKeyLatency, time.Since(startAt).Seconds())
 
 			var level log.Level
 			withoutStack := false
@@ -37,17 +38,17 @@ func LogServer(logger log.Logger) middleware.Middleware {
 					kvs = append(kvs, ExtractError(kerr)...)
 
 					if level >= log.LevelError {
-						kvs = append(kvs, KeyStack, kerr.StackTrace())
+						kvs = append(kvs, cnst.LogKeyStack, kerr.StackTrace())
 					}
 				} else {
-					kvs = append(kvs, KeyCode, errors.UnknownCode, KeyMessage, err.Error())
+					kvs = append(kvs, cnst.LogKeyCode, errors.UnknownCode, cnst.LogKeyMessage, err.Error())
 				}
 			} else {
 				level = log.LevelInfo
-				kvs = append(kvs, KeyCode, 0)
+				kvs = append(kvs, cnst.LogKeyCode, 0)
 			}
 
-			kvs = append(kvs, KeyArg, ExtractArgs(req))
+			kvs = append(kvs, cnst.LogKeyArg, ExtractArgs(req))
 
 			if withoutStack {
 				logger = WithNoStack(Unwrap(logger))

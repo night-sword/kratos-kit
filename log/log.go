@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 
+	. "github.com/night-sword/kratos-kit/cnst"
 	"github.com/night-sword/kratos-kit/errors"
 )
 
@@ -24,7 +25,7 @@ type loggerAppliance struct {
 
 func init() {
 	global.SetLogger(log.DefaultLogger)
-	global.SetMessageKey(KeyMessage)
+	global.SetMessageKey(LogKeyMessage)
 }
 
 func (a *loggerAppliance) SetLogger(in log.Logger) {
@@ -135,7 +136,7 @@ func Error(a ...interface{}) {
 			return
 		}
 
-		_ = global.Log(level, append(kvs, KeyOperation, errors.FromError(err).StackTrace()[0])...)
+		_ = global.Log(level, append(kvs, LogKeyOperation, errors.FromError(err).StackTrace()[0])...)
 		return
 	}
 
