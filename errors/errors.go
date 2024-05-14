@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -9,6 +10,8 @@ import (
 
 	kerr "github.com/go-kratos/kratos/v2/errors"
 	httpstatus "github.com/go-kratos/kratos/v2/transport/http/status"
+
+	"github.com/night-sword/kratos-kit/log"
 )
 
 const (
@@ -50,13 +53,12 @@ func (e *Error) WithCause(cause error) *Error {
 }
 
 // WithMetadata with an MD formed by the mapping of key, value.
-func (e *Error) WithMetadata(md map[string]string) *Error {
+func (e *Error) WithMetadata(meta map[string]string) *Error {
 	err := Clone(e)
-	err.Metadata = md
+	err.Metadata = meta
 	return err
 }
 
-// WithMetadata with an MD formed by the mapping of key, value.
 func (e *Error) AppendMetadata(k string, v any) *Error {
 	if e.Metadata == nil {
 		e.Metadata = map[string]string{k: fmt.Sprintf("%v", v)}
@@ -64,6 +66,11 @@ func (e *Error) AppendMetadata(k string, v any) *Error {
 		e.Metadata[k] = fmt.Sprintf("%v", v)
 	}
 	return e
+}
+
+// Alias AppendMetadata
+func (e *Error) AddMetadata(k string, v any) *Error {
+	return e.AppendMetadata(k, v)
 }
 
 // GRPCStatus returns the Status represented by se.
@@ -76,15 +83,16 @@ func (e *Error) GRPCStatus() *status.Status {
 	return s
 }
 
-func (e *Error) Degrade() *Error {
-	err := Clone(e)
-	if err.Metadata == nil {
-		err.Metadata = MetaAsWarn
-	} else {
-		err.Metadata[KeyAsWarn] = ValueAsWarn
-	}
+func (e *Error) Unrecoverable() *Error {
+	return e.WithCause(Unrecoverable).AddMetadata(log.KeyUnrecoverable, log.OKValue)
+}
 
-	return err.WithCause(Unrecoverable)
+func (e *Error) AsWarn() *Error {
+	return Clone(e).AddMetadata(log.KeyAsWarn, log.OKValue)
+}
+
+func (e *Error) Degrade() *Error {
+	return e.Unrecoverable().AsWarn()
 }
 
 // New returns an error object for the code, message.
@@ -174,4 +182,33 @@ func FromError(err error) *Error {
 		}
 	}
 	return ret
+}
+
+type _rsp struct {
+	Code     int32             `json:"code"`
+	Reason   string            `json:"reason"`
+	Message  string            `json:"message"`
+	Metadata map[string]string `json:"metadata"`
+}
+
+func FromHttpRsp(body []byte) *Error {
+	rsp := new(_rsp)
+	if err := json.Unmarshal(body, rsp); err != nil {
+		return BadRequest(RsnParams, "decode response to error struct fail")
+	}
+
+	err := &Error{
+		Status: kerr.Status{
+			Code:     rsp.Code,
+			Reason:   rsp.Reason,
+			Message:  rsp.Message,
+			Metadata: rsp.Metadata,
+		},
+	}
+
+	if u, ok := rsp.Metadata[log.KeyUnrecoverable]; ok && u == log.OKValue {
+		err.cause = Unrecoverable
+	}
+
+	return err
 }

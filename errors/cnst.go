@@ -7,13 +7,6 @@ import (
 	"github.com/avast/retry-go/v4"
 )
 
-// --- Meta --- //
-var (
-	MetaAsWarn  = map[string]string{KeyAsWarn: "1"}
-	KeyAsWarn   = "AsWarn"
-	ValueAsWarn = "1"
-)
-
 // ---- Reason ---- //
 const (
 	RsnNotFound         string = "NOT_FOUND"
