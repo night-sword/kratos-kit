@@ -84,15 +84,19 @@ func (e *Error) GRPCStatus() *status.Status {
 }
 
 func (e *Error) Unrecoverable() *Error {
-	return e.WithCause(Unrecoverable).AddMetadata(cnst.LogKeyUnrecoverable, cnst.OKValue)
+	return e.WithCause(Unrecoverable).AddMetadata(cnst.LogKeyUnrecoverable, cnst.LogOKValue)
 }
 
 func (e *Error) AsWarn() *Error {
-	return Clone(e).AddMetadata(cnst.LogKeyAsWarn, cnst.OKValue)
+	return Clone(e).AddMetadata(cnst.LogKeyAsWarn, cnst.LogOKValue)
 }
 
 func (e *Error) Degrade() *Error {
 	return e.Unrecoverable().AsWarn()
+}
+
+func (e *Error) AddAsWarnMeta() *Error {
+	return e.AppendMetadata(cnst.LogKeyAsWarn, cnst.LogOKValue)
 }
 
 // New returns an error object for the code, message.
@@ -206,7 +210,7 @@ func FromHttpRsp(body []byte) *Error {
 		},
 	}
 
-	if u, ok := rsp.Metadata[cnst.LogKeyUnrecoverable]; ok && u == cnst.OKValue {
+	if u, ok := rsp.Metadata[cnst.LogKeyUnrecoverable]; ok && u == cnst.LogOKValue {
 		err.cause = Unrecoverable
 	}
 

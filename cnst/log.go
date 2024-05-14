@@ -19,8 +19,8 @@ const (
 	LogKeyFunction      = "FUN"
 )
 
-var OKValue = "1"
+var LogOKValue = "1"
 
 var (
-	MetaAsWarn = map[string]string{LogKeyAsWarn: OKValue}
+	MetaAsWarn = map[string]string{LogKeyAsWarn: LogOKValue}
 )
