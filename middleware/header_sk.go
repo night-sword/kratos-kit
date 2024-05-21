@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/middleware"
@@ -21,8 +20,6 @@ func HeaderSK(ak, sk string) middleware.Middleware {
 			}
 
 			if !_isHealthCheckOperation(info) {
-				header := info.RequestHeader()
-				fmt.Println(header)
 				if info.RequestHeader().Get(ak) != sk {
 					err = errors.Forbidden(errors.RsnForbidden, "access forbidden").Degrade()
 					return
