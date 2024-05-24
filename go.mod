@@ -7,6 +7,7 @@ require (
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20240516020449-fbac5fa25e7a
 	github.com/go-kratos/kratos/v2 v2.7.3
 	github.com/go-resty/resty/v2 v2.13.1
+	github.com/google/go-querystring v1.1.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240521202816-d264139d666e
 	google.golang.org/grpc v1.64.0
