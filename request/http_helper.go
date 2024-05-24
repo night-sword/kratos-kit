@@ -43,7 +43,7 @@ func HttpGet[Response any](ctx context.Context, client *resty.Client, api string
 	return DecodeKratosJsonResponse[Response](r)
 }
 
-func HttpGetParams[Request, Response any](ctx context.Context, client *resty.Client, api string, req Request) (rsp *Response, err error) {
+func HttpGetParams[Request, Response any](ctx context.Context, client *resty.Client, api string, req *Request) (rsp *Response, err error) {
 	if req != nil {
 		r, e := query.Values(req)
 		if err = e; err != nil {
@@ -64,7 +64,7 @@ func HttpGetParams[Request, Response any](ctx context.Context, client *resty.Cli
 	return DecodeKratosJsonResponse[Response](r)
 }
 
-func HttpPost[Request, Response any](ctx context.Context, client *resty.Client, api string, req Request) (rsp *Response, err error) {
+func HttpPost[Request, Response any](ctx context.Context, client *resty.Client, api string, req *Request) (rsp *Response, err error) {
 	r, err := client.R().
 		SetContext(ctx).
 		SetBody(req).
