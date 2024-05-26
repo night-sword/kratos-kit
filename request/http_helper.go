@@ -26,7 +26,7 @@ func DecodeKratosJsonResponse[T any](response *resty.Response) (rsp *T, err erro
 
 	err = json.Unmarshal(response.Body(), &rsp)
 	if err != nil {
-		err = errors.BadRequest(errors.RsnAccessRepoFail, "decode response fail").AddMetadata("rsp", string(response.Body()))
+		err = errors.BadRequest(errors.RsnAccessRepoFail, "decode response fail").AsWarn().WithCause(err)
 	}
 
 	return
