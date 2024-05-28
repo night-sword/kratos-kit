@@ -21,7 +21,7 @@ func HeaderSK(ak, sk string) middleware.Middleware {
 
 			if !_isHealthCheckOperation(info) {
 				if info.RequestHeader().Get(ak) != sk {
-					err = errors.Forbidden(errors.RsnForbidden, "access forbidden").Degrade()
+					err = errors.Forbidden(errors.RsnForbidden, "access forbidden").Degrade().AddMetadata("operation", info.Operation())
 					return
 				}
 			}
