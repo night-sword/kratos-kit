@@ -41,6 +41,8 @@ func TestLoop(t *testing.T) {
 			Loop(tt.fn, tt.interval)
 		})
 	}
+
+	time.Sleep(time.Second * 10)
 }
 
 func TestTick(t *testing.T) {
@@ -75,6 +77,8 @@ func TestTick(t *testing.T) {
 			Tick(tt.fn, tt.interval)
 		})
 	}
+
+	time.Sleep(time.Second * 10)
 }
 
 func TestLoopContext(t *testing.T) {
@@ -137,6 +141,8 @@ func TestLoopContext(t *testing.T) {
 			LoopContext(tt.ctx, tt.fn, tt.interval)
 		})
 	}
+
+	time.Sleep(time.Second * 10)
 }
 
 func TestTickContext(t *testing.T) {
@@ -199,4 +205,6 @@ func TestTickContext(t *testing.T) {
 			TickContext(tt.ctx, tt.fn, tt.interval)
 		})
 	}
+
+	time.Sleep(time.Second * 10)
 }
