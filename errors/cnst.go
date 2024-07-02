@@ -18,6 +18,7 @@ const (
 	RsnRequestRateLimit        = "REQUEST_RATE_LIMIT"
 	RsnAccessRepoFail          = "ACCESS_REPO_FAIL"
 	RsnTimeout                 = "TIMEOUT"
+	RsnPanic                   = "PANIC"
 )
 
 // ---- Unrecoverable ---- //
