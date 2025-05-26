@@ -19,6 +19,7 @@ const (
 	RsnAccessRepoFail          = "ACCESS_REPO_FAIL"
 	RsnTimeout                 = "TIMEOUT"
 	RsnPanic                   = "PANIC"
+	RsnIgnorable               = "IGNORABLE"
 )
 
 // ---- Unrecoverable ---- //
@@ -43,4 +44,11 @@ func IsDuplicateErr(err error) (is bool) {
 	is = idx1 >= 0 && idx2 >= 0
 
 	return
+}
+
+// ---- Ignored error ---- //
+var IgnorableErr = errors.New(RsnIgnorable)
+
+func IsIgnorableErr(err error) bool {
+	return errors.Is(err, IgnorableErr)
 }

@@ -15,7 +15,6 @@ func FormatError() middleware.Middleware {
 				err = errors.FromError(err)
 			}
 			return
-
 		}
 	}
 }
