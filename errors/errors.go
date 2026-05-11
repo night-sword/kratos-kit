@@ -198,20 +198,22 @@ type _rsp struct {
 func FromHttpRsp(body []byte) *Error {
 	rsp := new(_rsp)
 	if err := json.Unmarshal(body, rsp); err != nil {
-		return BadRequest(RsnParams, "decode response to error struct fail")
+		return New(UnknownCode, UnknownReason, "decode response to error struct fail").
+			AddMetadata("body", string(body))
 	}
 
-	err := &Error{
-		Status: kerr.Status{
-			Code:     rsp.Code,
-			Reason:   rsp.Reason,
-			Message:  rsp.Message,
-			Metadata: rsp.Metadata,
-		},
+	// body decoded successfully but is not a kratos error struct (all fields zero); preserve raw body for diagnosis
+	if rsp.Code == 0 && rsp.Reason == "" && rsp.Message == "" && len(rsp.Metadata) == 0 {
+		return New(UnknownCode, UnknownReason, string(body))
+	}
+
+	err := New(int(rsp.Code), rsp.Reason, rsp.Message)
+	if len(rsp.Metadata) > 0 {
+		err = err.WithMetadata(rsp.Metadata)
 	}
 
 	if u, ok := rsp.Metadata[cnst.LogKeyUnrecoverable]; ok && u == cnst.LogOKValue {
-		err.cause = Unrecoverable
+		err = err.WithCause(Unrecoverable)
 	}
 
 	return err
